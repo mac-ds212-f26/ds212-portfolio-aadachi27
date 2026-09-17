@@ -33,6 +33,19 @@ Carryout the following steps to clean and save the San Francisco Weather data.  
 
 
 ```{r}
+library(tidyverse)
+weather <- read_csv("weather.csv")
+```
 
+```{r}
+weather <- weather |>
+  mutate(PrecipYr = na_if(PrecipYr, 99999)) |>
+  mutate(date = as.Date(date, "%m/%d/%y")) |>
+  mutate(dateInYear = yday(date)) |>
+  mutate(month_name = month.abb[Month])
+```
+
+```{r}
+write_csv(weather, 'weather_clean.csv')
 ```
 
