@@ -158,8 +158,10 @@ In your visualization, also display the usual temperatures (`NormalLow` and `Nor
 
 ```{r weather_plot_temp_all}
 ggplot(weather, aes(x = dateInYear)) +
-  geom_linerange(ymin = RecordLow, ymax = RecordHigh, color = '#ECEBE3') +
-  geom_linerange(ymin = NormalLow, ymax = NormalHigh, color = '#C8B8BA') +
+  geom_linerange(aes(ymin = RecordLow, ymax = RecordHigh, color = 'Record')) +
+  geom_linerange(aes(ymin = NormalLow, ymax = NormalHigh, color = 'Normal')) +
+  geom_linerange(aes(ymin = Low, ymax = High, color = 'Actual')) +
+  scale_color_discrete(palette = c('#A90248', '#C8B8BA', '#ECEBE3')) +
   theme_classic()
 
 ```
@@ -175,7 +177,17 @@ If you'd like finer control of the width of these lines/rectangles, check out th
 Recreate the visual demarcations of the months by adding vertical lines separating the months.  Brainstorm how we might draw those vertical lines. What `geom` might we use?  What subset of the data might we use in that `geom` layer to draw lines only at the month divisions? 
 
 ```{r }
+weather |>
+  select(Day, dateInYear) |>
+  filter(Day == 1)
 
+ggplot(weather, aes(x = dateInYear)) +
+  geom_linerange(aes(ymin = RecordLow, ymax = RecordHigh, color = 'Record')) +
+  geom_linerange(aes(ymin = NormalLow, ymax = NormalHigh, color = 'Normal')) +
+  geom_linerange(aes(ymin = Low, ymax = High, color = 'Actual')) +
+  scale_color_discrete(palette = c('#A90248', '#C8B8BA', '#ECEBE3')) +
+  geom_vline(xintercept = c(1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335), color = 'grey') +
+  theme_classic()
 
 ```
 
@@ -188,6 +200,18 @@ Change the x-axis labels so that the month names display in the center of each m
 ::: {.callout-tip title="Month Names"}
 R has built-in variables called `month.abb` and `month.name` that contain abbreviated and full month names.
 :::
+
+```{r}
+ggplot(weather, aes(x = dateInYear)) +
+  geom_linerange(aes(ymin = RecordLow, ymax = RecordHigh, color = 'Record')) +
+  geom_linerange(aes(ymin = NormalLow, ymax = NormalHigh, color = 'Normal')) +
+  geom_linerange(aes(ymin = Low, ymax = High, color = 'Actual')) +
+  scale_color_discrete(palette = c('#A90248', '#C8B8BA', '#ECEBE3')) +
+  scale_x_continuous(breaks = c(1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335),
+                     minor_breaks = NULL,
+                     labels = month.abb) +
+  theme(axis.text.x = element_text(hjust = -0.5))
+```
 
 
 Try to figuring out this new challenge using search engines and LLMs:
@@ -209,7 +233,14 @@ Create a precipitation plot that looks like the following.  Note that
 
 
 ```{r weather_plot_precip}
-
+weather |>
+  mutate(CulmPrec = if_else(dateInYear %in% c(1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335), NA, CulmPrec)) |>
+  mutate(RecordP = if_else(RecordP == FALSE, NA, CulmPrec + 0.1)) |>
+  ggplot(aes(x = dateInYear, y = CulmPrec)) +
+  geom_area(fill = "#ebeae2", na.rm = TRUE) +
+  geom_line(color = "#32a3d8", na.rm = TRUE) +
+  geom_point(aes(x = dateInYear, y = RecordP), shape = 25, fill = "black") +
+  geom_text(aes(label = CulmPrec), check_overlap = TRUE)
 ```
 ## Done!
 
