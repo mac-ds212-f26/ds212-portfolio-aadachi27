@@ -266,7 +266,10 @@ diamonds |>
 
 #5
 diamonds |>
-  mutate(price_cat1 = if_else(price < 500, "low", "high"))
+  mutate(price_cat1 = if_else(price < 500, "low", "high"),
+         price_cat2 = case_when(price < 500 ~ "low",
+                                price >= 500 & price <= 1000 ~ "medium",
+                                price > 1000 ~ "high"))
 ```
 
 
@@ -538,6 +541,8 @@ gss_cat |>
 
 ```{r}
 ratings <- c("High", "Medium", "Low")
+ratings_fct <- factor(ratings, levels = c("High", "Medium", "Low"))
+ratings_fct
 ```
 
 
