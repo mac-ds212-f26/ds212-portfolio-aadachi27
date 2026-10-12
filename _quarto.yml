@@ -22,7 +22,7 @@ number-depth: 2
 
 book:
   title: "COMP/STAT212 Portfolio"
-  author: "Your Name Here"
+  author: "Annabelle Adachi"
   date: today  # use today to update date published based on last time project was edited
   date-format: full
   # favicon: path/to/favorite-logo.png
@@ -45,7 +45,7 @@ book:
       # footer text
 
   sidebar:
-    title: "Your Name Here"
+    title: "Annabelle Adachi"
     logo: assets/sidebar-logo.png
     logo-alt: "Random negative space illustration"
     collapse-level: 2
@@ -66,8 +66,7 @@ book:
 
     - part: "TidyTuesday"
       chapters:
-      - tt/2025-07-08.qmd
-      - tt/2025-07-15.qmd
+      - tt/hw01-tt.qmd
 
     - part: "Pre-Class Learnings"
       chapters:
@@ -75,8 +74,10 @@ book:
 
     - part: "In-Class Activities"
       chapters:
-      - ica/ica-sample1.qmd
-      - ica/ica-sample2.qmd
+      - ica/cleaning.qmd
+      - ica/03-adv-ggplot-notes.qmd
+      - ica/04-adv_maps/code/04-adv-maps-1-notes.qmd
+      - ica/06-wrangling-1-notes.qmd
 
     - part: "Extras"
       chapters:
@@ -108,6 +109,7 @@ format:
     code-fold: true
     number-sections: false
     toc-expand: true
+
     # grid:
     #   sidebar-width: 200px
     #   body-width: 950px
