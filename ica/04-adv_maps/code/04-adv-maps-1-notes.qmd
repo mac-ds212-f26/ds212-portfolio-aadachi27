@@ -293,7 +293,7 @@ seven_countyarea <- mn_counties |>
     st_bbox()
 seven_countyarea
 
-elevation <- elevatr::get_elev_raster(mn_counties |> st_crop(seven_countyarea), z = 9, clip = "bbox")
+#elevation <- elevatr::get_elev_raster(mn_counties |> st_crop(seven_countyarea), z = 9, clip = "bbox")
 raster::crs(elevation) <- sf::st_crs(mn_counties)
 
 # Convert to data frame for plotting
