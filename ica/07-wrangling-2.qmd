@@ -117,8 +117,8 @@ Create the string `C:\Users`. What happens when you don't escape the `\`?
 
 ```{r ex_create_string_slash}
 # write your answer below
-users_string <- "C:\Users"
-users_string
+#users_string <- "C:\Users"
+#users_string
 
 # Without using \\ to escape the special character \, an error message is produced: '\U' used without hex digits in character string (<input>:1:23)
 ```
@@ -412,10 +412,10 @@ str_subset(posts, "gay")
 str_extract_all(posts, "gay")
 ```
 ```{r}
-str_replace(posts, "gay", "fierce")
+#str_replace(posts, "gay", "fierce")
 ```
 ```{r}
-str_remove(posts, "gay")
+#str_remove(posts, "gay")
 ```
 
 
