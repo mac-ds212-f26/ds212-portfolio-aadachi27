@@ -206,7 +206,9 @@ for(i in 1:10){
 
 
 # vectorized approach with `seq()`
-for()
+for(i in seq_len(10)) {
+  print(2 * i)
+}
 ```
 
 
@@ -215,11 +217,16 @@ for()
 Iterates over the `month.name` vector and stores a character vector of output containing strings like "Month 1: January", "Month 2: February". Then, produce the same output with `str_c()` only.
 
 ```{r}
+months_vec <- vector("character", length = length(month.name))
+
 # for loop
-
-
+for(i in seq_along(month.name)) {
+  months_vec[i] <- str_c("Month ", i, ": ", month.name[i])
+}
+months_vec
 
 # vectorized approach with `str_c()`
+str_c("Month ", 1:12, ": ", month.name)
 ```
 
 
@@ -228,8 +235,21 @@ Iterates over the `month.name` vector and stores a character vector of output co
 On the `diamonds` dataset, fit stratified models of price vs. carat, model separately estimated for each value of `cut`, and store the fitted models in a list storage container.
 
 ```{r}
-# for loop
+cuts <- diamonds |>
+  pull(cut) |>
+  levels()
 
+price_v_carat_models <- vector("list", length = length(cuts))
+
+# for loop
+for(i in seq_along(cuts)) {
+  current_cut <- cuts[i]
+  diamond_cut <- diamonds |>
+    filter(cut == current_cut)
+  price_v_carat_models[[i]] <- lm(price ~ carat, diamond_cut)
+}
+
+price_v_carat_models
 ```
 
 
@@ -311,7 +331,12 @@ Using the `diamonds` dataset, complete the following exercises.
 Transform the `x`, `y`, and `z` columns so that the units of millimeters are displayed (e.g., "4.0 mm").
 
 ```{r}
+mm_units <- function(x) {
+  str_c(x, " mm")
+}
 
+diamonds |>
+    mutate(across(.cols = c(x, y, z), .fns = mm_units))
 ```
 
 
@@ -322,7 +347,8 @@ Convert all numeric columns into character columns.
 - Hint: type `is.` and hit Tab in the Console. Scroll through the function options. Do the same with `as.`
 
 ```{r}
-
+diamonds |>
+    mutate(across(where(is.numeric), as.character))
 ```
 
 
@@ -401,7 +427,11 @@ Work with your partner on the following exercises. As you work, make note of wha
 Use `crossing()` to create the data frame of argument combinations for our analyses. Call it `df_arg_combos`. Note that you can create a list of **formula** objects in R with `c(y ~ x1, y ~ x1 + x2)`. (Something like this will be the right hand side of an argument to `crossing()`.)
 
 ```{r}
-
+df_arg_combos <- crossing(
+    argument = c(price ~ depth, price ~ depth + carat,  price ~ depth + carat + table,  price ~ depth + carat + table + color),
+    remove_outliers = c(TRUE, FALSE)
+)
+df_arg_combos
 ```
 
 
@@ -410,7 +440,13 @@ Use `crossing()` to create the data frame of argument combinations for our analy
 Write a function called `remove_outliers` that removes outliers in a dataset. The user should be able to supply the dataset (`data`), the variable to remove outliers in (`what_var`), and a threshold on the number of SDs away from the mean used to define outliers (`sd_thresh`). Write your function so that it runs as follows: `remove_outliers(diamonds, what_var = carat, sd_thresh = 3)`.
 
 ```{r}
+remove_outliers <- function(data, what_var, sd_thresh) {
+    data |>
+        mutate(zscore = ({{ what_var }} - mean({{ what_var }}, na.rm = TRUE))/sd({{ what_var }}, na.rm = TRUE)) |>
+        filter(zscore <= sd_thresh)
+}
 
+remove_outliers(diamonds, carat, 3)
 ```
 
 
@@ -424,6 +460,13 @@ fit_model <- function(data, mod_formula, remove_outliers) {
     # This function implements our specific use case: outliers are cases that are 3 SDs away from the mean for the carat variable
 
     # Use mod_formula as the first argument of lm()
+    if (remove_outliers) {
+        no_outliers <- remove_outliers(data, carat, 3)
+    } else {
+        data_clean <- data
+    }
+
+    lm(mod_formula, data = no_outliers)
 }
 ```
 
@@ -444,7 +487,17 @@ Note that in `df_arg_combos`:
 - `remove_outliers`: this column is a **vector** and you can extract the 1st element with `[1]`
 
 ```{r}
+linear_models <- vector("list", length = nrow(df_arg_combos))
 
+for (i in seq_along(linear_models)) {
+    model_formula <- df_arg_combos$mod_formula[[i]] 
+    without_outliers <- df_arg_combos$remove_outliers[i]
+    linear_models[[i]] <- fit_model(
+        data = diamonds,
+        mod_formula = model_formula,
+        remove_outliers = without_outliers
+    )
+}
 ```
 
 
