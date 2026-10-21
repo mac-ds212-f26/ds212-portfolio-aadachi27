@@ -325,7 +325,13 @@ For each of the tasks below, write a function that take a vector as input return
 Return the elements at even-numbered positions. (Hint: use the `seq()` function.)
 
 ```{r}
+colors <- c("Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink")
 
+evens <- function(x) {
+  x[seq(from = 2, to = length(x), by = 2)]
+}
+
+evens(colors)
 ```
 
 
@@ -334,7 +340,11 @@ Return the elements at even-numbered positions. (Hint: use the `seq()` function.
 Return every element except the last value.
 
 ```{r}
+all_but_last <- function(x) {
+  x[-length(x)]
+}
 
+all_but_last(colors)
 ```
 
 
@@ -343,7 +353,13 @@ Return every element except the last value.
 Return only even values (and no missing values).
 
 ```{r}
+numbers <- c(1, 2, 3, 4, 5, 6, NA, 7)
 
+even_nums <- function(x) {
+  x[!is.na(x) & (x %% 2) == 0]
+}
+
+even_nums(numbers)
 ```
 
 
@@ -377,74 +393,9 @@ Test your function on the `mtcars` dataset.
 
 Development tip: As you develop, it will help to create objects for the arguments so that you can see what output looks like interactively:
 
-```{r}
-data <- mtcars
-yvar <- "mpg"
-preds <- c("hp", "wt")
-pred_of_interest <- "hp"
-```
+
 
 When you're done developing your function, remove these objects to declutter your environment by entering `rm(data, yvar, preds, pred_of_interest)` in the Console.
-
-```{r}
-#| eval: false
-
-fit_mod_and_extract <- function(___) {
-    # Use str_c to create a string (formula_str) that looks like "yvar ~ pred1 + pred2"
-    # Look at the documentation for a helpful argument
-    mod_formula_str <-
-    mod_form <- as.formula(mod_formula_str)
-
-    # Fit a linear model using the constructed formula and given data
-    mod <- lm(mod_form, data = data)
-
-    # Obtain 95% confidence interval
-    ci <- confint(mod, level = 0.95)
-
-    # Return the coefficient estimate and CI for the predictor of interest
-    tibble(
-        which_pred = pred_of_interest,
-        estimate = ___,
-        ci_lower = ___,
-        ci_upper = ___
-    )
-}
-```
-
-```{r}
-
-```
-
-
-## Debugging Strategies
-
-When writing functions and working with functions that you wrote, you may encounter errors that are hard to figure out. Here are some strategies to help you debug the issues you encounter.
-
-
-### `print()` & `cat()`
-
-Use `print()` and `cat()` to print out intermediate results and messages within a function, eg, `print(x)`, `cat("The value of x is", x, "\n")`
-
-```{r}
-My_own_sum <- function(x){
-  print(x)
-  return(sum(x))
-}
-My_own_sum(c(1,2,3))
-
-My_own_sum <- function(x){
-  cat("The value of x is", x, "\n")
-  cat("The class of x is", class(x), "\n")
-  return(sum(x))
-}
-
-My_own_sum(c(1,2,3))
-```
-
-
-### `browser()`
-
-Use `browser()` to pause the function at a certain point and interactively explore the environment. Press "Next" or type `n` to run the next line of code. Type the name of an object in the Console to see its value at this point in the function. You can type `Q` to quit the browser.
 
 ```{r}
 #| eval: false
@@ -452,11 +403,8 @@ Use `browser()` to pause the function at a certain point and interactively explo
 fit_mod_and_extract <- function(data, yvar, preds, pred_of_interest) {
     # Use str_c to create a string (formula_str) that looks like "yvar ~ pred1 + pred2"
     # Look at the documentation for a helpful argument
-    mod_formula_str <- str_c(yvar, "~", str_c(preds, collapse = "+"))
+    mod_formula_str <- str_c(yvar, " ~ ", preds[1], " + ", preds[2])
     mod_form <- as.formula(mod_formula_str)
-
-    # Add browser() to where in the function you'd like to pause and interact in the function environment using the Console
-    browser()
 
     # Fit a linear model using the constructed formula and given data
     mod <- lm(mod_form, data = data)
@@ -473,55 +421,6 @@ fit_mod_and_extract <- function(data, yvar, preds, pred_of_interest) {
     )
 }
 
-
-fit_mod_and_extract(data = mtcars, yvar = "mpg", preds = c("hp", "wt"), pred_of_interest = "hp")
+fit_mod_and_extract(mtcars, "mpg", c("hp", "wt"), "hp")
 ```
-
-
-### `try()`
-
-Use `try()` to catch errors and print out a message when an error occurs.
-
-```{r}
-#| error: true
-
-My_own_sum <- function(x){
-  return(sum(x))
-}
-
-results <- My_own_sum(c("a","b","c"))
-class(results)
-
-results <- try(My_own_sum(c("a","b","c")), silent = TRUE)
-class(results)
-
-```
-
-
-### `stop()`
-
-Include `if else` statements within a function to ensure that you are passing the right type of input to a function. You can create you own custom error message with `stop()`.
-
-```{r}
-#| error: true
-
-My_own_sum <- function(x){
-  if(!is.numeric(x)){
-    stop("Input must be numeric")
-  }
-  return(sum(x))
-}
-
-results <- My_own_sum(c("a","b","c"))
-class(results)
-
-results <- try(My_own_sum(c("a","b","c")), silent = TRUE)
-class(results)
-
-```
-
-
-## Done!
-
-- Check the ICA Instructions for how to (a) push your code to GitHub and (b) update your portfolio website
 
