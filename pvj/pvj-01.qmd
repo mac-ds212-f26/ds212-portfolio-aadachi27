@@ -2,4 +2,24 @@
 title: "Personal Visualization Journey"
 ---
 
-Add content here
+Loading Data
+
+```{r}
+screen_time_data <- read_csv('Personal Visualization Data - Sheet1.csv')
+```
+Wrangling Data
+
+```{r}
+screen_time_data <- screen_time_data |>
+  mutate(week_day = wday(date))
+```
+
+Visualization
+
+```{r}
+screen_time_data |>
+  ggplot(aes(x = date, y = screen_time, color = week_day)) +
+  geom_point() +
+  scale_color_viridis_c()
+```
+
